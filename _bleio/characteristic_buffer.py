@@ -84,7 +84,7 @@ class CharacteristicBuffer:
         start_time = time.time()
         while idx < length and time.time() - start_time < self._timeout:
             try:
-                buf[idx] = self._queue.get(timeout=self._timeout)
+                buf[idx] = self._queue.get_nowait()
                 idx += 1
             except queue.Empty:
                 # Let the BLE code run for a bit, and try again.
