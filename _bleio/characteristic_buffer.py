@@ -29,7 +29,7 @@ class CharacteristicBuffer:
         characteristic: Characteristic,
         *,
         timeout: float = 1,
-        buffer_size: int = 64
+        buffer_size: int = 1024
     ):
 
         """Monitor the given Characteristic. Each time a new value is written to the Characteristic
@@ -81,14 +81,14 @@ class CharacteristicBuffer:
         """
         length = len(buf)
         idx = 0
-        end = time.time() + self._timeout
-        while idx < length and time.time() < end:
+        start_time = time.time()
+        while idx < length and time.time() - start_time < self._timeout:
             try:
-                buf[idx] = self._queue.get_nowait()
+                buf[idx] = self._queue.get(timeout=self._timeout)
                 idx += 1
             except queue.Empty:
                 # Let the BLE code run for a bit, and try again.
-                adapter.await_bleak(asyncio.sleep(0.1))
+                adapter.await_bleak(asyncio.sleep(0.0001))
 
         return idx
 
