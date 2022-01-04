@@ -107,7 +107,7 @@ class CharacteristicBuffer:
                 line.append(b)
             except queue.Empty:
                 # Let the BLE code run for a bit, and try again.
-                adapter.await_bleak(asyncio.sleep(0.1))
+                adapter.await_bleak(asyncio.sleep(0.01))
                 continue
             if b == 0x0A:  # newline
                 break
